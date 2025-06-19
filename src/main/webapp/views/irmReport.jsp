@@ -1113,7 +1113,7 @@ tr td:last-child {
  	    							},
  	    							
  	    							"bDestroy" : true,
- 	    							"sAjaxSource" : "<%=request.getContextPath()%>/ajax/getIRMListLaztLoad?"+myParams,
+ 	    							"sAjaxSource" : "<%=request.getContextPath()%>/ajax/getIRMListLaztLoadR?"+myParams,
  	    		        "aoColumns": [
  	    		        
  	      		         	{ "mData": function(data,type,row){
@@ -1179,7 +1179,10 @@ tr td:last-child {
  			         			}
  			         			$('#counts').html(data.counts)
  			                	$('#noCounts').html(data.noCounts)
- 			                   	$('#allIncidents').html(data.all_irm)
+ 			                    $('#allIncidents').html(
+									  Number(data.active_irm) + Number(data.inActive_irm) + Number(data.not_assigned)
+									);
+
  			            		$('#activeApprovers').html(data.active_irm)
  			            		$('#inActiveApprovers').html(data.inActive_irm)
  			            		$('#not_assigned').html(data.not_assigned)

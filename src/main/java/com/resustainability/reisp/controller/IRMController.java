@@ -276,6 +276,86 @@ public class IRMController {
 		}
 		return objList;
 	}
+	
+	@RequestMapping(value = "/ajax/getIRMListLaztLoadR", method = { RequestMethod.POST, RequestMethod.GET })
+	public void getIRMListLaztLoadR(@ModelAttribute IRM obj, HttpServletRequest request,
+			HttpServletResponse response, HttpSession session) throws IOException {
+		PrintWriter pw = null;
+		//JSONObject json = new JSONObject();
+		String json2 = null; 
+		String userId = null;
+		String userName = null;
+		String role = null;
+		try {
+			//userId = (String) session.getAttribute("USER_ID");
+			//userName = (String) session.getAttribute("USER_NAME");
+			//role = (String) session.getAttribute("BASE_ROLE");
+			obj.setUser(userId);
+			obj.setRole(role);
+			if(!StringUtils.isEmpty(obj.getFrom_and_to())) {
+				if(obj.getFrom_and_to().contains("to")) {
+					String [] dates = obj.getFrom_and_to().split("to");
+					obj.setFrom_date(dates[0].trim());
+					obj.setTo_date(dates[1].trim());
+				}else {
+					obj.setFrom_date(obj.getFrom_and_to());
+				}
+			}
+
+			pw = response.getWriter();
+			//Fetch the page number from client
+			Integer pageNumber = 0;
+			Integer pageDisplayLength = 0;
+			if (null != request.getParameter("iDisplayStart")) {
+				pageDisplayLength = Integer.valueOf(request.getParameter("iDisplayLength"));
+				pageNumber = (Integer.valueOf(request.getParameter("iDisplayStart")) / pageDisplayLength) + 1;
+			}
+			//Fetch search parameter
+			String searchParameter = request.getParameter("sSearch");
+
+			//Fetch Page display length
+			pageDisplayLength = Integer.valueOf(request.getParameter("iDisplayLength"));
+
+			List<IRM> budgetList = new ArrayList<IRM>();
+
+			//Here is server side pagination logic. Based on the page number you could make call 
+			//to the data base create new list and send back to the client. For demo I am shuffling 
+			//the same list to show data randomly
+			int startIndex = 0;
+			int offset = pageDisplayLength;
+
+			if (pageNumber == 1) {
+				startIndex = 0;
+				offset = pageDisplayLength;
+				budgetList = createPaginationData(startIndex, offset, obj, searchParameter);
+			} else {
+				startIndex = (pageNumber * offset) - offset;
+				offset = pageDisplayLength;
+				budgetList = createPaginationData(startIndex, offset, obj, searchParameter);
+			}
+
+			//Search functionality: Returns filtered list based on search parameter
+			//budgetList = getListBasedOnSearchParameter(searchParameter,budgetList);
+
+			int totalRecords = getTotalRecords(obj, searchParameter);
+
+			IRMPaginationObject personJsonObject = new IRMPaginationObject();
+			//Set Total display record
+			personJsonObject.setiTotalDisplayRecords(totalRecords);
+			//Set Total record
+			personJsonObject.setiTotalRecords(totalRecords);
+			personJsonObject.setAaData(budgetList);
+
+			Gson gson = new GsonBuilder().setPrettyPrinting().create();
+			json2 = gson.toJson(personJsonObject);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(
+					"getUsersList : User Id - " + userId + " - User Name - " + userName + " - " + e.getMessage());
+		}
+
+		pw.println(json2);
+	}
 	@RequestMapping(value = "/ajax/getIRMListReport", method = {RequestMethod.GET,RequestMethod.POST},produces=MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public List<IRM> getIRMListReport(@ModelAttribute IRM obj,HttpSession session) {

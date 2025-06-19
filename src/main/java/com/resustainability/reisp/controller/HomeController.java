@@ -137,7 +137,7 @@ public class HomeController {
 			User uBoj = new User();
 			uBoj.setEmail_id(email);
 			User userDetails = service.validateUser(uBoj);
-			companiesList = service2.getIRMList(obj);
+			//companiesList = service2.getIRMList(obj);
 			user.setUser_id(userId);
 			user.setRole(role);
 			List<User> rewardsList = service.getRewardsHistory(user);
@@ -152,7 +152,7 @@ public class HomeController {
 					 model.addObject("not_assigned", companiesList.get(0).getNot_assigned());
 				 }
 			}else if(role.equals("User")) {
-				 model = new ModelAndView(PageConstants.dashboard);
+				 model = new ModelAndView(PageConstants.dashboardAdmin2);
 				 model.addObject("rewardsList", rewardsList);
 				 model.addObject("reward_points", userDetails.getReward_points());
 				 if(!StringUtils.isEmpty(companiesList) && companiesList.size() > 0) {
@@ -162,7 +162,7 @@ public class HomeController {
 					 model.addObject("not_assigned", companiesList.get(0).getNot_assigned());
 				 }
 			}else {
-				model = new ModelAndView(PageConstants.dashboard);
+				model = new ModelAndView(PageConstants.dashboardAdmin2);
 				model.addObject("rewardsList", rewardsList);
 				 model.addObject("reward_points", userDetails.getReward_points());
 				 if(!StringUtils.isEmpty(companiesList) && companiesList.size() > 0) {
