@@ -52,6 +52,10 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter{
 				
 				 return true;
 			}
+			if(requestURI.equals("/"+context_path+"/proxy") &&  !requestURI.equals("/"+context_path+"/login")) {
+				
+				 return true;
+			}
 			if(!request.getRequestURI().contains("@")){
 			if( !requestURI.equals("/"+context_path+"/") && !requestURI.equals("/"+context_path+"/login") 
 					&& !requestURI.equals("/") && !requestURI.equals("/login") && !requestURI.equals("/"+context_path+"/logout")){

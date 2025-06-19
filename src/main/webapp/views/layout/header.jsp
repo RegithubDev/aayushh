@@ -11,7 +11,7 @@
 <title>Header</title>
 <style type="text/css">
 .horizontal-menu .header-navbar.navbar-brand-center .navbar-header {
-    left: calc(3% - 56px) !important;
+    left: calc(3% - 96px) !important;
     }
     .card-img {
    max-width: 21% !important;

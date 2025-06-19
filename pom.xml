@@ -280,10 +280,10 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-          <release>18</release>
+          <release>17</release>
           	<warName>aayushh</warName>
                 <!-- <outputDirectory>D:\jboss-as-7.1.1.Final\standalone\deployments</outputDirectory> -->
-                <outputDirectory>E:\Development\apache-tomcat-9.0.43\webapps</outputDirectory>
+                <outputDirectory>C:\Program Files\Apache Software Foundation\Tomcat 8.5\webapps</outputDirectory>
         </configuration>
       </plugin>
         <plugin>

@@ -3,6 +3,7 @@ package com.resustainability.reisp.constants;
 public class PageConstants {
 
 	public static final String login = "newLoginPage";   
+	public static final String proxy = "proxy";   
 	public static final String newUserLogin = "newUserLogin";   
 	public static final String googleLoginpageTest = "googleLoginpageTest"; 
 	public static final String forgotPassword = "forgotPasswordPage";
