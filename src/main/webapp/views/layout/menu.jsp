@@ -119,7 +119,7 @@ div.main-menu-content {
         </div>
        <div class="buy-now">
     <div class="position-relative d-inline-block">
-               <a href="/reirm/irm-add-incident" class="btn btn-danger waves-effect waves-float waves-light">Raise New Incident</a>
+               <a href="/aayushh/irm-add-incident" class="btn btn-danger waves-effect waves-float waves-light">Raise New Incident</a>
               <span class="badge rounded-pill bg-primary badge-up">New</span>
             </div>
   

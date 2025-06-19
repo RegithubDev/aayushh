@@ -632,23 +632,6 @@ body {
     <div class="drag-target"></div>
 
 
-<div class="modal fade show" id="addNewCard" tabindex="-1" aria-labelledby="addNewCardTitle" style="display: block; padding-left: 0px;" aria-modal="true" role="dialog">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header bg-transparent">
-      </div>
-      <div class="modal-body px-sm-5 mx-50 pb-1 mt-1">
-        <h4 class="text-center mb-1" id="addNewCardTitle"><i class='fa fa-map-marker' aria-hidden='true'></i> <span id="errVal">Allow Location to Access this Form.</span></h4>
-          <div class="col-12 text-center">
-            <button type="reset" class="btn btn-outline-secondary mt-1 waves-effect" data-bs-dismiss="modal" aria-label="Close">
-              Close
-            </button>
-          </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 
     <!-- BEGIN: Footer-->
     <footer class="footer footer-static footer-light">
@@ -708,7 +691,7 @@ body {
     <script>
       $(window).on("load",(function(){
     	  var x = document.getElementById("demo");
-    	  $('#sBtn').attr('disabled', true);
+    	  $('#sBtn').attr('disabled', false);
     	  if (navigator.geolocation) {
     		  var ssss =   navigator.geolocation.getCurrentPosition(showPosition,showError);
     		  } else { 
@@ -725,24 +708,7 @@ body {
         	  
     		}
     	  function showError(error) {
-    		  switch(error.code) {
-    		    case error.PERMISSION_DENIED:
-    		    	 $('#addNewCard').modal('show');
-    		    	 $('#errVal').html("Allow Location to Access this Form.")
-    		      break;
-    		    case error.POSITION_UNAVAILABLE:
-    		    	 $('#addNewCard').modal('show');
-    		    	 $('#errVal').html("Location information is unavailable, Please Allow Location to Access this Form.")
-    		      break;
-    		    case error.TIMEOUT:
-    		    	 $('#addNewCard').modal('show');
-    		    	 $('#errVal').html("The request to get user location timed out, Allow Location to Access this Form.")
-    		      break;
-    		    case error.UNKNOWN_ERROR:
-    		    	 $('#addNewCard').modal('show');
-    		    	 $('#errVal').html("An unknown error occurred.")
-    		      break;
-    		  }
+    		
     		}
     	  
           if (feather) {
