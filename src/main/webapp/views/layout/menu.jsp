@@ -66,7 +66,7 @@ div.main-menu-content {
           <%--  </c:if>  --%>
           
 	
-		<c:if test="${sessionScope.R_DASHBOARD eq 'Yes' }">
+		<c:if test="${sessionScope.BASE_ROLE eq 'Admin'}">
             <li class="dropdown nav-item " data-menu="dropdown" id="masters"><a class="dropdown-toggle nav-link d-flex align-items-center" href="#" data-bs-toggle="dropdown"><i data-feather="package"></i><span data-i18n="Masters">Masters</span></a>
               <ul class="dropdown-menu" data-bs-popper="none">
                <c:forEach var="obj" items="${menuList}" varStatus="index">

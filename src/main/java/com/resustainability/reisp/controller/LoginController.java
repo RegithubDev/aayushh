@@ -49,7 +49,7 @@ public class LoginController {
 	
 	@Autowired
 	UserService service2;
-	
+	 
 	@Autowired
 	LocationService service3;
 	
@@ -79,7 +79,7 @@ public class LoginController {
 		}
 		return model; 
 	}
-	@RequestMapping(value = "/proxy", method = {RequestMethod.POST, RequestMethod.GET})
+	@RequestMapping(value = "/q", method = {RequestMethod.POST, RequestMethod.GET})
 	public ModelAndView proxy(@ModelAttribute User user, HttpSession session,HttpServletRequest request) {
 		ModelAndView model = new ModelAndView(PageConstants.proxy);
 		try {
@@ -102,15 +102,7 @@ public class LoginController {
 				if(!StringUtils.isEmpty(userDetails)) {
 					//if((userDetails.getSession_count()) == 0) {
 						model.setViewName("redirect:/home");
-						User permisions = service.getAllPermissions(userDetails.getBase_role());
-						/// USER PERMISISONS
-						session.setAttribute("R_ADD", permisions.getP_add());
-						session.setAttribute("R_EDIT", permisions.getP_edit());
-						session.setAttribute("R_VIEW", permisions.getP_view());
-						session.setAttribute("R_APPROVALS", permisions.getP_approvals());
-						session.setAttribute("R_REPORTS", permisions.getP_reports());
-						session.setAttribute("R_DASHBOARD", permisions.getP_dashboards());
-						session.setAttribute("R_AUTO_EMAIL", permisions.getP_auto_email());
+					
 						/// USER BASIC SESSION DATA
 						session.setAttribute("user", userDetails);
 						session.setAttribute("ID", userDetails.getId());
@@ -183,15 +175,7 @@ public class LoginController {
 				if(!StringUtils.isEmpty(userDetails)) {
 					//if((userDetails.getSession_count()) == 0) {
 						model.setViewName("redirect:/home");
-						User permisions = service.getAllPermissions(userDetails.getBase_role());
-						/// USER PERMISISONS
-						session.setAttribute("R_ADD", permisions.getP_add());
-						session.setAttribute("R_EDIT", permisions.getP_edit());
-						session.setAttribute("R_VIEW", permisions.getP_view());
-						session.setAttribute("R_APPROVALS", permisions.getP_approvals());
-						session.setAttribute("R_REPORTS", permisions.getP_reports());
-						session.setAttribute("R_DASHBOARD", permisions.getP_dashboards());
-						session.setAttribute("R_AUTO_EMAIL", permisions.getP_auto_email());
+						
 						/// USER BASIC SESSION DATA
 						session.setAttribute("user", userDetails);
 						session.setAttribute("ID", userDetails.getId());

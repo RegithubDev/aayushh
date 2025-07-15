@@ -92,7 +92,7 @@ public class HomeController {
 					 model.addObject("not_assigned", companiesList.get(0).getNot_assigned());
 				 }
 			}else if(!StringUtils.isEmpty(role) && role.equals("User")) {
-				 model = new ModelAndView(PageConstants.dashboard);
+				 model = new ModelAndView(PageConstants.dashboardAdmin);
 				// model.addObject("rewardsList", rewardsList);
 				// model.addObject("reward_points", userDetails.getReward_points());
 				 if(!StringUtils.isEmpty(companiesList) && companiesList.size() > 0) {
@@ -102,7 +102,7 @@ public class HomeController {
 					 model.addObject("not_assigned", companiesList.get(0).getNot_assigned());
 				 }
 			}else {
-				model = new ModelAndView(PageConstants.dashboard);
+				model = new ModelAndView(PageConstants.dashboardAdmin);
 				//model.addObject("rewardsList", rewardsList);
 			//	 model.addObject("reward_points", userDetails.getReward_points());
 				 if(!StringUtils.isEmpty(companiesList) && companiesList.size() > 0) {

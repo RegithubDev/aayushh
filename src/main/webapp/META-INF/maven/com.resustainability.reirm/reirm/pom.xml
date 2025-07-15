@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.resustainability.aayushh</groupId>
+  <groupId>com.resustainability.reisp</groupId>
   <artifactId>aayushh</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
@@ -13,27 +13,28 @@
 	  <spring.version>4.2.0.RELEASE</spring.version>
 	  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-   <dependencies> 
-    <dependency>
-	    <groupId>com.fasterxml.jackson.core</groupId>
-	    <artifactId>jackson-databind</artifactId>
-	    <version>2.13.0</version>
+   <dependencies>  
+   <dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>9.1.0</version>
+</dependency>
+
+	   <dependency>
+    <groupId>org.reflections</groupId>
+    <artifactId>reflections</artifactId>
+    <version>0.9.12</version>
+</dependency>
+     <dependency>
+    <groupId>org.json</groupId>
+    <artifactId>json</artifactId>
+    <version>20190722</version>
+</dependency>
+   <dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.13.0</version>
 	</dependency>
-   <dependency>
-    <groupId>org.apache.tika</groupId>
-    <artifactId>tika-core</artifactId>
-    <version>1.18</version>
-</dependency>
-   <dependency>
-    <groupId>org.springframework</groupId>
-    <artifactId>spring-test</artifactId>
-    <version>${spring.version}</version>
-</dependency>
-<dependency>
-    <groupId>org.springframework</groupId>
-    <artifactId>spring-core</artifactId>
-    <version>${spring.version}</version>
-</dependency>
     <dependency>
      <groupId>com.google.api-client</groupId>
      <artifactId>google-api-client</artifactId>
@@ -54,6 +55,11 @@
 		<groupId>org.springframework</groupId>
 		<artifactId>spring-core</artifactId>
 		<version>${spring.version}</version>
+	</dependency>
+	<dependency>
+	    <groupId>com.github.oshi</groupId>
+	    <artifactId>oshi-core</artifactId>
+	    <version>LATEST</version>
 	</dependency>
 	<dependency>
 		<groupId>org.springframework</groupId>
@@ -221,7 +227,25 @@
 	    <artifactId>spring-security-crypto</artifactId>
 	    <version>${spring.version}</version>
 	</dependency>
-	
+	<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+<dependency>
+    <groupId>com.google.guava</groupId>
+    <artifactId>guava</artifactId>
+    <version>20.0</version>
+</dependency>
+<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore -->
+<dependency>
+    <groupId>org.apache.httpcomponents</groupId>
+    <artifactId>httpcore</artifactId>
+    <version>4.4.10</version>
+</dependency>
+<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-api</artifactId>
+    <version>1.7.25</version>
+</dependency>
+
 	<dependency>
 	    <groupId>com.google.code.gson</groupId>
 	    <artifactId>gson</artifactId>
@@ -237,6 +261,7 @@
       <artifactId>java-saml</artifactId>
       <version>2.9.0</version>
   </dependency>
+    
   </dependencies>
   <repositories>
     <repository>
@@ -255,10 +280,10 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-          <release>18</release>
+          <release>17</release>
           	<warName>aayushh</warName>
                 <!-- <outputDirectory>D:\jboss-as-7.1.1.Final\standalone\deployments</outputDirectory> -->
-                <outputDirectory>E:\Development\apache-tomcat-9.0.43\webapps</outputDirectory>
+                <outputDirectory>C:\Program Files\Apache Software Foundation\Tomcat 8.5\webapps</outputDirectory>
         </configuration>
       </plugin>
         <plugin>

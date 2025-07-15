@@ -653,7 +653,7 @@ h1{
 
                   <div class="col-md-2 col-12">
                     <div class="mb-1">
-                      <label class="form-label" for="pd-default">Target Date<span class="required"> </span></label>
+                      <label class="form-label" for="pd-default">Target Date<span class="required">* </span></label>
           				<input type="date" id="fp-default" class="form-control datepicker" name="tentative_dates" placeholder="YYYY-MM-DD" value="${obj.tentative_date }">
                     </div>
                   </div>
@@ -724,7 +724,7 @@ h1{
 
                   <div class="col-md-2 col-12">
                     <div class="mb-1">
-                      <label class="form-label" for="pd-default">Target Date<span class="required"> </span></label>
+                      <label class="form-label" for="pd-default">Target Date<span class="required"> *</span></label>
                        <input type="date" id="fp-default" class="form-control datepicker" name="tentative_dates" placeholder="YYYY-MM-DD" value="${obj.tentative_date }">
           			<!-- 	<input type="date" id="fp-default" class="form-control datepicker"  name="tentative_dates" placeholder="YYYY-MM-DD" > -->
                     </div>

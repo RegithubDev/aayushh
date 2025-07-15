@@ -298,8 +298,8 @@ public class IRMDao {
 				    count = namedParamJdbcTemplate.update(HIS_qry, paramSource);
 				    
 				    
-			//	if(!StringUtils.isEmpty(obj.getApprover_code()) ) {
-					if(false) {
+				if(!StringUtils.isEmpty(obj.getApprover_code()) ) {
+				//	if(count) {
 					EMailSender emailSender = new EMailSender();
 					String link_url =CommonConstants.HOST+"/reirm/update-irm-form/" ;
 					Mail mail = new Mail();
@@ -1707,8 +1707,8 @@ public class IRMDao {
 				if(!StringUtils.isEmpty(obj.getEmail_id()) ) {
 					String link_url =CommonConstants.HOST+"/reirm/update-irm-form/" ;
 					String subject = "Acknowledgment!";
-					//if(!StringUtils.isEmpty(obj.getEmployee_code()) ) {
-					if(false) {
+					if(!StringUtils.isEmpty(obj.getEmployee_code()) ) {
+					//if(false) {
 						EMailSender emailSender = new EMailSender();
 						Mail mail = new Mail();
 						//mail.setMailFrom(obj.getEmail_id());
@@ -1718,8 +1718,8 @@ public class IRMDao {
 								+ "\n\n The Incident Reviewed by "+obj.getUser_name()+"( "+obj.getUser_id()+" )"
 										+ ". for more details \n\n <br> Please follow the link  <a href="+link_url+obj.getDocument_code()+"><button>Click Here</button></a>";
 						emailSender.send(mail.getMailTo(), mail.getMailSubject(), body ,obj,subject);
-					//}else {
-					}if(false) {
+					}else {
+					//}if(false) {
 						EMailSender emailSender = new EMailSender();
 						Mail mail = new Mail();
 						//mail.setMailFrom(obj.getEmail_id());
@@ -2186,7 +2186,7 @@ public class IRMDao {
 		int totalRecords = 0;
 		try {
 			int arrSize = 0;
-			String qry = "select count( document_code) as total_records  from safety_ims c "
+			String qry = "select COUNT(DISTINCT document_code) as total_records  from safety_ims c "
 				+ " left join safety_ims_workflow up on c.document_code = up.document_no "
 				+ " left join project p on c.project_code = p.project_code "
 				+ " left join sbu sb on p.sbu_code = sb.sbu_code"

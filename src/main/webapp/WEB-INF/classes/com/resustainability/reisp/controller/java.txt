@@ -1,0 +1,52 @@
+import java.util.Scanner;
+
+public class SimpleLoginCheck {
+    public static void main(String[] args) {
+        // Predefined correct credentials
+        String correctUsername = "admin";
+        String correctPassword = "password123";
+
+        Scanner sc = new Scanner(System.in);
+
+        // Get input from user
+        System.out.print("Enter username: ");
+        String inputUsername = sc.nextLine();
+
+        System.out.print("Enter password: ");
+        String inputPassword = sc.nextLine();
+
+        // Check credentials using if statement
+        if (inputUsername.equals(correctUsername) && inputPassword.equals(correctPassword)) {
+            System.out.println("Login successful!");
+        } else {
+            System.out.println("Invalid username or password.");
+        }
+
+        sc.close();
+    }
+}
+ What is Session Scope?
+Session scope means storing data for a user session — it lasts as long as the user is active on your website or app (from login until logout or timeout).
+
+🔹 Common Use:
+Storing logged-in user data, like username, role, cart items.
+
+Available across multiple pages for one user.
+
+
+What is Authentication?
+Authentication is the process of verifying who the user is.
+
+🟢 Example:
+Username & password login
+
+Fingerprint / OTP / biometric login
+
+
+What is Authorization?
+Authorization is about what a user is allowed to do after authentication.
+
+🟢 Example:
+Admin can view all users
+
+A regular user can only view their own profile

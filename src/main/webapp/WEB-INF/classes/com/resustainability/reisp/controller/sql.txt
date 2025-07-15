@@ -1,0 +1,154 @@
+SQL INTERVIEW TEST – BASICS TO INTERMEDIATE (VARIATION)
+
+------------------------------------------------
+1. CREATE A TABLE
+------------------------------------------------
+Q: Create a table `students` with the following columns:
+- student_id (INT, Primary Key)
+- first_name (VARCHAR(50))
+- last_name (VARCHAR(50))
+- grade (DECIMAL(4,2))
+- class_id (INT)
+
+Answer:
+CREATE TABLE students (
+    student_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    grade DECIMAL(4,2),
+    class_id INT
+);
+
+------------------------------------------------
+2. INSERT A RECORD
+------------------------------------------------
+Q: Insert a record into the `students` table.
+
+Answer:
+INSERT INTO students (student_id, first_name, last_name, grade, class_id)
+VALUES (101, 'Alice', 'Smith', 88.50, 5);
+
+------------------------------------------------
+3. UPDATE A RECORD
+------------------------------------------------
+Q: Increase Alice Smith’s grade by 5%.
+
+Answer:
+UPDATE students
+SET grade = grade * 1.05
+WHERE student_id = 101;
+
+------------------------------------------------
+4. DELETE A RECORD
+------------------------------------------------
+Q: Delete the student with ID = 101.
+
+Answer:
+DELETE FROM students
+WHERE student_id = 101;
+
+------------------------------------------------
+5. ADD A NEW COLUMN
+------------------------------------------------
+Q: Add a column `email` (VARCHAR(100)) to `students`.
+
+Answer:
+ALTER TABLE students
+ADD email VARCHAR(100);
+
+------------------------------------------------
+6. CREATE A SECOND TABLE FOR JOIN
+------------------------------------------------
+Q: Create a `classes` table.
+
+Answer:
+CREATE TABLE classes (
+    class_id INT PRIMARY KEY,
+    class_name VARCHAR(50)
+);
+
+------------------------------------------------
+7. INSERT INTO CLASSES
+------------------------------------------------
+Answer:
+INSERT INTO classes (class_id, class_name)
+VALUES (5, 'Math'), (6, 'Science'), (7, 'History');
+
+------------------------------------------------
+8. INNER JOIN EXAMPLE
+------------------------------------------------
+Q: Get student names with their class names.
+
+Answer:
+SELECT s.first_name, s.last_name, c.class_name
+FROM students s
+INNER JOIN classes c ON s.class_id = c.class_id;
+
+------------------------------------------------
+9. LEFT JOIN EXAMPLE
+------------------------------------------------
+Q: Get all students even if they don’t belong to any class.
+
+Answer:
+SELECT s.first_name, s.last_name, c.class_name
+FROM students s
+LEFT JOIN classes c ON s.class_id = c.class_id;
+
+------------------------------------------------
+10. COUNT AND GROUP BY
+------------------------------------------------
+Q: Count how many students are in each class.
+
+Answer:
+SELECT class_id, COUNT(*) AS student_count
+FROM students
+GROUP BY class_id;
+
+------------------------------------------------
+11. WHERE CLAUSE
+------------------------------------------------
+Q: Get students with grades above 85.
+
+Answer:
+SELECT * FROM students
+WHERE grade > 85;
+
+------------------------------------------------
+12. ORDER BY
+------------------------------------------------
+Q: List students ordered by highest grade first.
+
+Answer:
+SELECT * FROM students
+ORDER BY grade DESC;
+
+------------------------------------------------
+13. LIMIT / TOP / FETCH
+------------------------------------------------
+Q: Get top 3 highest-scoring students (SQL Server syntax).
+
+Answer:
+SELECT TOP 3 * FROM students
+ORDER BY grade DESC;
+
+(For MySQL/PostgreSQL, use LIMIT 3 at the end)
+
+------------------------------------------------
+14. ALIAS AND CONCAT
+------------------------------------------------
+Q: Show full name of student as a single column.
+
+Answer:
+SELECT first_name + ' ' + last_name AS full_name
+FROM students;
+
+(Use CONCAT(first_name, ' ', last_name) in MySQL/PostgreSQL)
+
+------------------------------------------------
+15. BETWEEN OPERATOR
+------------------------------------------------
+Q: Get students with grades between 70 and 90.
+
+Answer:
+SELECT * FROM students
+WHERE grade BETWEEN 70 AND 90;
