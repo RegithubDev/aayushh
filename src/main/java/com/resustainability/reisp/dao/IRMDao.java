@@ -298,10 +298,9 @@ public class IRMDao {
 				    count = namedParamJdbcTemplate.update(HIS_qry, paramSource);
 				    
 				    
-				if(!StringUtils.isEmpty(obj.getApprover_code()) ) {
-				//	if(count) {
+				//if(!StringUtils.isEmpty(obj.getApprover_code()) ) {
 					EMailSender emailSender = new EMailSender();
-					String link_url =CommonConstants.HOST+"/reirm/update-irm-form/" ;
+					String link_url =CommonConstants.HOST+"/aayushh/update-irm-form/" ;
 					Mail mail = new Mail();
 					mail.setMailTo(obj.getEmail());
 					mail.setMailSubject("Incident - Report | Safety Alerts | Re Sustainability");
@@ -365,7 +364,7 @@ public class IRMDao {
 							emailSender.send(mail.getMailTo(), mail.getMailSubject(), body,obj,subject);
 					 }
 					 
-				}
+				
 				String insertQryForWorkFlow = "INSERT INTO safety_ims_workflow "
 						+ "(document_no,approver_type,approver_code,status,action_taken,assigned_on,incident_category,level_status)"
 						+ " VALUES "
@@ -1705,7 +1704,7 @@ public class IRMDao {
 			}
 			  if(count > 0) {
 				if(!StringUtils.isEmpty(obj.getEmail_id()) ) {
-					String link_url =CommonConstants.HOST+"/reirm/update-irm-form/" ;
+					String link_url =CommonConstants.HOST+"/aayushh/update-irm-form/" ;
 					String subject = "Acknowledgment!";
 					if(!StringUtils.isEmpty(obj.getEmployee_code()) ) {
 					//if(false) {

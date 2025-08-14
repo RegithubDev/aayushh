@@ -50,8 +50,8 @@ public class HomeController {
 	  
 	@Autowired  
 	UserService service;
-
-	@Autowired
+ 
+	@Autowired 
 	IRMService service2;
 	
 	@Value("${Login.Form.Invalid}")

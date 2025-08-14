@@ -28,9 +28,9 @@ public class CommonConstants {
 	
 //////////////////////////////// Production ////////////////////////////////////////////////////////////
 	
-	public final static String HOST = "https://internal.resustainability.com/";
-	public final static String HOME = "https://internal.resustainability.com/reirm/";
-	public final static String INDEX = "https://internal.resustainability.com/index/";
+	public final static String HOST = "https://appmint.resustainability.com/";
+	public final static String HOME = "https://appmint.resustainability.com/aayushh/";
+	public final static String INDEX = "https://appmint.resustainability.com/index/";
 	
 	
 }

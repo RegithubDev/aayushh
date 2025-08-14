@@ -17,6 +17,7 @@ import java.util.StringTokenizer;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -44,29 +45,30 @@ public class EMailSender {
 
 private static Logger logger = Logger.getLogger(EMailSender.class);
 
-	/************** G Mail Server Credentials**************************************/
-	private static String mailId = "businessapps.appworks@resustainability.com";
-	private static String pass = "ecrt qsqw mwdz glsq";
-	
-	public static Session getSession() {
-		Properties prop = new Properties();
+/************** G Mail Server Credentials**************************************/
+private static final String mailId = "businessapps.appworks@resustainability.com";
+private static final String APP_PASSWORD = "lbyr gmki rtpj loua"; // Replace with your App Password
+
+public static Session getSession() {
+    Properties prop = new Properties();
+
+    /************** GMAIL SMTP Settings **************/
+    prop.put("mail.smtp.host", "smtp.gmail.com");
+    prop.put("mail.smtp.port", "587");
+    prop.put("mail.smtp.auth", "true");
+    prop.put("mail.smtp.starttls.enable", "true"); // TLS security
+    prop.put("mail.smtp.connectiontimeout", "50000"); // 50 seconds
+    prop.put("mail.smtp.timeout", "50000");           // 50 seconds
+    prop.put("mail.smtp.writetimeout", "50000");      // 50 seconds
+
+    /************** Create and Return Session **************/
+    return Session.getInstance(prop, new Authenticator() {
+        @Override
+        protected PasswordAuthentication getPasswordAuthentication() {
+            return new PasswordAuthentication(mailId, APP_PASSWORD);
+        }
+    });
 		
-	
-		
-		/************** GMAIL Server Starts**************************************/
-		prop.put("mail.smtp.host", "smtp.gmail.com");
-        prop.put("mail.smtp.port", "587");
-        prop.put("mail.smtp.auth", "true");
-        prop.put("mail.smtp.starttls.enable", "true"); //TLS
-		/************** GMAIL Server ends*************************************/
-		
-		Session session = Session.getInstance(prop,
-		  new javax.mail.Authenticator() {
-			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(mailId, pass);
-			}
-		  });
-		return session;
 	}
 	public boolean send(String toAddress, String subject, String body, IRM obj, String subject2) throws UnsupportedEncodingException, InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, BadPaddingException, IllegalBlockSizeException, NullPointerException {
 		boolean isSend = false;		
@@ -84,7 +86,7 @@ private static Logger logger = Logger.getLogger(EMailSender.class);
 			mp.addBodyPart(htmlPart);
 			message.setContent(mp);
 			message.setText( body,"utf-8", "html");
-			
+			System.out.println(APP_PASSWORD);
 			Transport.send(message);
 			logger.info("Email sent successfully");
 			isSend = true;

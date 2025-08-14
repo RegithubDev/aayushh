@@ -396,10 +396,10 @@ public class RoleMappingDao {
 								paramSource = new BeanPropertySqlParameterSource(obj);		 
 								count2 = namedParamJdbcTemplate.update(insert1Qry, paramSource);
 							}
-							if(false) {
+							if(true) {
 								if(!StringUtils.isEmpty(obj.getEmployee_code()) ) {
 									EMailSender emailSender = new EMailSender();
-									String link_url =CommonConstants.HOST+"/reirm/" ;
+									String link_url =CommonConstants.HOST+"/aayushh/" ;
 									Mail mail = new Mail();
 									mail.setMailTo(obj.getEmail_id());
 									mail.setMailSubject("Approver Against Incident");
@@ -445,10 +445,10 @@ public class RoleMappingDao {
 							paramSource = new BeanPropertySqlParameterSource(obj);		 
 							count2 = namedParamJdbcTemplate.update(insert1Qry, paramSource);
 						}
-						if(false) {
+						if(true) {
 							if(!StringUtils.isEmpty(obj.getEmployee_code()) ) {
 								EMailSender emailSender = new EMailSender();
-								String link_url =CommonConstants.HOST+"/reirm/" ;
+								String link_url =CommonConstants.HOST+"/aayushh/" ;
 								Mail mail = new Mail();
 								mail.setMailTo(obj.getEmail_id());
 								mail.setMailSubject("Approver Against Incident");
