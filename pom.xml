@@ -58,6 +58,35 @@
     <artifactId>spring-core</artifactId>
     <version>5.3.30</version> <!-- Match this to your other Spring modules -->
 </dependency>
+<!-- Maven example -->
+<dependency>
+    <groupId>org.apache.poi</groupId>
+    <artifactId>poi</artifactId>
+    <version>5.3.0</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.poi</groupId>
+    <artifactId>poi-ooxml</artifactId>
+    <version>5.3.0</version>
+</dependency>
+<!-- Optional but recommended for charts -->
+<dependency>
+    <groupId>org.apache.poi</groupId>
+    <artifactId>poi-ooxml</artifactId>
+    <version>5.2.3</version>
+</dependency>
+
+<!-- or use the full schema bundle (lighter) -->
+<dependency>
+    <groupId>org.apache.poi</groupId>
+    <artifactId>ooxml-schemas</artifactId>
+    <version>1.4</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.poi</groupId>
+    <artifactId>poi-ooxml</artifactId>
+    <version>5.2.3</version>
+</dependency>
 
 	<dependency>
 	    <groupId>com.github.oshi</groupId>

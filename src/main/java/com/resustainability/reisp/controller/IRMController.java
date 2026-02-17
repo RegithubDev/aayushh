@@ -5,11 +5,16 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,9 +31,17 @@ import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.charts.AxisPosition;
 import org.apache.poi.ss.util.WorkbookUtil;
+import org.apache.poi.xddf.usermodel.chart.LegendPosition;
+import org.apache.poi.xddf.usermodel.chart.XDDFCategoryAxis;
+import org.apache.poi.xddf.usermodel.chart.XDDFChartLegend;
+import org.apache.poi.xddf.usermodel.chart.XDDFValueAxis;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFChart;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -51,7 +64,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.resustainability.reisp.common.DateParser;
 import com.resustainability.reisp.constants.PageConstants;
-import com.resustainability.reisp.model.Company;
 import com.resustainability.reisp.model.IRM;
 import com.resustainability.reisp.model.IRMPaginationObject;
 import com.resustainability.reisp.model.Project;
@@ -61,7 +73,47 @@ import com.resustainability.reisp.model.User;
 import com.resustainability.reisp.model.UserPaginationObject;
 import com.resustainability.reisp.service.IRMService;
 import com.resustainability.reisp.service.IRMService;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xddf.usermodel.XDDFColor;
+import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
+import org.apache.poi.xddf.usermodel.XDDFSolidFillProperties;
+import org.apache.poi.xddf.usermodel.chart.BarDirection;
+import org.apache.poi.xddf.usermodel.chart.ChartTypes;
+import org.apache.poi.xddf.usermodel.chart.XDDFBarChartData;
+import org.apache.poi.xddf.usermodel.chart.XDDFCategoryAxis;
+import org.apache.poi.xddf.usermodel.chart.XDDFCategoryDataSource;
+import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
+import org.apache.poi.xddf.usermodel.chart.XDDFChartLegend;
+import org.apache.poi.xddf.usermodel.chart.XDDFDataSourcesFactory;
+import org.apache.poi.xddf.usermodel.chart.XDDFNumericalDataSource;
+import org.apache.poi.xddf.usermodel.chart.XDDFValueAxis;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFChart;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class IRMController {
 
@@ -883,161 +935,423 @@ public class IRMController {
 	}
 	
 
-	
-	@RequestMapping(value = "/export-irm", method = {RequestMethod.GET,RequestMethod.POST})
-	public void exportIRM(HttpServletRequest request, HttpServletResponse response,HttpSession session,@ModelAttribute IRM obj,RedirectAttributes attributes){
-		ModelAndView view = new ModelAndView(PageConstants.irmMain);
-		List<IRM> dataList = new ArrayList<IRM>();
-		String userId = null;String userName = null;
-		try {
-			userId = (String) session.getAttribute("USER_ID");userName = (String) session.getAttribute("USER_NAME");
-			view.setViewName("redirect:/irm");
-			if(!StringUtils.isEmpty(obj.getFrom_and_to())) {
-				if(obj.getFrom_and_to().contains("to")) {
-					String [] dates = obj.getFrom_and_to().split("to");
-					obj.setFrom_date(dates[0].trim());
-					obj.setTo_date(dates[1].trim());
-				}else {
-					obj.setFrom_date(obj.getFrom_and_to());
-				}
-			}
-			dataList = service.getIRMList(obj); 
-			if(dataList != null && dataList.size() > 0){
-	            XSSFWorkbook  workBook = new XSSFWorkbook ();
-	            XSSFSheet sheet = workBook.createSheet(WorkbookUtil.createSafeSheetName("IRM"));
-		        workBook.setSheetOrder(sheet.getSheetName(), 0);
-		        
-		        byte[] blueRGB = new byte[]{(byte)0, (byte)176, (byte)240};
-		        byte[] yellowRGB = new byte[]{(byte)255, (byte)192, (byte)0};
-		        byte[] greenRGB = new byte[]{(byte)146, (byte)208, (byte)80};
-		        byte[] redRGB = new byte[]{(byte)255, (byte)0, (byte)0};
-		        byte[] whiteRGB = new byte[]{(byte)255, (byte)255, (byte)255};
-		        
-		        boolean isWrapText = true;boolean isBoldText = true;boolean isItalicText = false; int fontSize = 11;String fontName = "Times New Roman";
-		        CellStyle blueStyle = cellFormating(workBook,blueRGB,HorizontalAlignment.CENTER,VerticalAlignment.CENTER,isWrapText,isBoldText,isItalicText,fontSize,fontName);
-		        CellStyle yellowStyle = cellFormating(workBook,yellowRGB,HorizontalAlignment.CENTER,VerticalAlignment.CENTER,isWrapText,isBoldText,isItalicText,fontSize,fontName);
-		        CellStyle greenStyle = cellFormating(workBook,greenRGB,HorizontalAlignment.CENTER,VerticalAlignment.CENTER,isWrapText,isBoldText,isItalicText,fontSize,fontName);
-		        CellStyle redStyle = cellFormating(workBook,redRGB,HorizontalAlignment.CENTER,VerticalAlignment.CENTER,isWrapText,isBoldText,isItalicText,fontSize,fontName);
-		        CellStyle whiteStyle = cellFormating(workBook,whiteRGB,HorizontalAlignment.CENTER,VerticalAlignment.CENTER,isWrapText,isBoldText,isItalicText,fontSize,fontName);
-		        
-		        CellStyle indexWhiteStyle = cellFormating(workBook,whiteRGB,HorizontalAlignment.LEFT,VerticalAlignment.CENTER,isWrapText,isBoldText,isItalicText,fontSize,fontName);
-		        
-		        isWrapText = true;isBoldText = false;isItalicText = false; fontSize = 9;fontName = "Times New Roman";
-		        CellStyle sectionStyle = cellFormating(workBook,whiteRGB,HorizontalAlignment.LEFT,VerticalAlignment.CENTER,isWrapText,isBoldText,isItalicText,fontSize,fontName);
-		        
-		        
-	            XSSFRow headingRow = sheet.createRow(0);
-	        	String headerString = "Incident Code,SBU,Project,Department,Description,Level,Status,Risk,Date,Raised By" + 
-	    				"";
-	            String[] firstHeaderStringArr = headerString.split("\\,");
-	            
-	            for (int i = 0; i < firstHeaderStringArr.length; i++) {		        	
-		        	Cell cell = headingRow.createCell(i);
-			        cell.setCellStyle(greenStyle);
-					cell.setCellValue(firstHeaderStringArr[i]);
-				}
-	            
-	            short rowNo = 1;
-	            for (IRM obj1 : dataList) {
-	                XSSFRow row = sheet.createRow(rowNo);
+	@RequestMapping(value = "/export-irm", method = {RequestMethod.GET, RequestMethod.POST})
+	public void exportIRM(HttpServletRequest request, HttpServletResponse response, HttpSession session,
+	                      @ModelAttribute IRM obj, RedirectAttributes attributes) {
+
+	    ModelAndView view = new ModelAndView(PageConstants.irmMain);
+	    List<IRM> dataList = new ArrayList<>();
+	    String userId = null;
+	    String userName = null;
+
+	    try {
+	        userId = (String) session.getAttribute("USER_ID");
+	        userName = (String) session.getAttribute("USER_NAME");
+	        view.setViewName("redirect:/irm");
+
+	        if (!StringUtils.isEmpty(obj.getFrom_and_to())) {
+	            if (obj.getFrom_and_to().contains("to")) {
+	                String[] dates = obj.getFrom_and_to().split("to");
+	                obj.setFrom_date(dates[0].trim());
+	                obj.setTo_date(dates[1].trim());
+	            } else {
+	                obj.setFrom_date(obj.getFrom_and_to());
+	                obj.setTo_date(obj.getFrom_and_to()); // single date case
+	            }
+	        }
+
+	        dataList = service.getIRMList(obj);
+
+	        if (dataList != null && !dataList.isEmpty()) {
+	            XSSFWorkbook workBook = new XSSFWorkbook();
+
+	            // Aggregate data
+	            class Agg {
+	                int duringWeek = 0;
+	                int ytd = 0;
+	                int complied = 0;
+	                int inProgress = 0;
+	            }
+
+	            LocalDate now = LocalDate.now();
+	            LocalDate weekStart = now.minusDays(6);
+	            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMM-yy");
+
+	            String fromDate = obj.getFrom_date() != null ? obj.getFrom_date() : "N/A";
+	            String toDate = obj.getTo_date() != null ? obj.getTo_date() : "N/A";
+	            String dynamicTitle = "Aayush Observations status from " + fromDate + " to " + toDate;
+
+	            Map<String, Map<String, Agg>> aggMap = new HashMap<>();
+
+	            for (IRM irm : dataList) {
+	                if (irm.getSbu_code() == null || irm.getProject_code() == null) {
+	                    continue;
+	                }
+
+	                String sbu = irm.getSbu_code();
+	                String project = irm.getProject_name();
+
+	                String createdDate = irm.getCreated_date();
+	                if (createdDate == null || createdDate.trim().isEmpty()) {
+	                    continue;
+	                }
+
+	                String dateStr;
+	                try {
+	                    dateStr = createdDate.split("\\s+")[0].trim();
+	                } catch (Exception ex) {
+	                    continue;
+	                }
+
+	                LocalDate date;
+	                try {
+	                    date = LocalDate.parse(dateStr, formatter);
+	                } catch (Exception ex) {
+	                    continue;
+	                }
+
+	                boolean isThisWeek = !date.isBefore(weekStart);
+	                String status = irm.getStatus();
+	                boolean isComplied = status != null && "Resolved".equals(status);
+
+	                Map<String, Agg> projectMap = aggMap.computeIfAbsent(sbu, k -> new HashMap<>());
+	                Agg agg = projectMap.computeIfAbsent(project, k -> new Agg());
+
+	                agg.ytd++;
+	                if (isThisWeek) agg.duringWeek++;
+	                if (isComplied) agg.complied++;
+	                else agg.inProgress++;
+	            }
+
+	            // Cell styles
+	            byte[] blueRGB   = new byte[]{(byte)0, (byte)176, (byte)240};
+	            byte[] yellowRGB = new byte[]{(byte)255, (byte)192, (byte)0};
+	            byte[] greenRGB  = new byte[]{(byte)146, (byte)208, (byte)80};
+	            byte[] redRGB    = new byte[]{(byte)255, (byte)0, (byte)0};
+	            byte[] whiteRGB  = new byte[]{(byte)255, (byte)255, (byte)255};
+
+	            boolean isWrapText = true;
+	            boolean isBoldText = true;
+	            boolean isItalicText = false;
+	            int fontSize = 11;
+	            String fontName = "Times New Roman";
+
+	            CellStyle blueStyle   = cellFormating(workBook, blueRGB,   HorizontalAlignment.CENTER, VerticalAlignment.CENTER, isWrapText, isBoldText, isItalicText, fontSize, fontName);
+	            CellStyle yellowStyle = cellFormating(workBook, yellowRGB, HorizontalAlignment.CENTER, VerticalAlignment.CENTER, isWrapText, isBoldText, isItalicText, fontSize, fontName);
+	            CellStyle greenStyle  = cellFormating(workBook, greenRGB,  HorizontalAlignment.CENTER, VerticalAlignment.CENTER, isWrapText, isBoldText, isItalicText, fontSize, fontName);
+	            CellStyle redStyle    = cellFormating(workBook, redRGB,    HorizontalAlignment.CENTER, VerticalAlignment.CENTER, isWrapText, isBoldText, isItalicText, fontSize, fontName);
+	            CellStyle whiteStyle  = cellFormating(workBook, whiteRGB,  HorizontalAlignment.CENTER, VerticalAlignment.CENTER, isWrapText, isBoldText, isItalicText, fontSize, fontName);
+
+	            CellStyle indexWhiteStyle = cellFormating(workBook, whiteRGB, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, isWrapText, isBoldText, isItalicText, fontSize, fontName);
+
+	            isWrapText = true; isBoldText = false; isItalicText = false; fontSize = 9; fontName = "Times New Roman";
+	            CellStyle sectionStyle = cellFormating(workBook, whiteRGB, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, isWrapText, isBoldText, isItalicText, fontSize, fontName);
+
+	            List<String> sbuList = new ArrayList<>(aggMap.keySet());
+	            sbuList.sort(Comparator.naturalOrder());
+
+	            // Summary data preparation
+	            List<Object[]> summaryData = new ArrayList<>();
+	            int grandDuring = 0, grandYtd = 0, grandComplied = 0;
+	            for (String sbu : sbuList) {
+	                Map<String, Agg> projs = aggMap.get(sbu);
+	                int sDuring = 0, sYtd = 0, sComplied = 0, sInProgress = 0;
+	                for (Agg a : projs.values()) {
+	                    sDuring += a.duringWeek;
+	                    sYtd += a.ytd;
+	                    sComplied += a.complied;
+	                    sInProgress += a.inProgress;
+	                }
+	                double sPerc = sYtd > 0 ? (double) sComplied / sYtd * 100 : 0;
+	                summaryData.add(new Object[]{sbu, sDuring, sYtd, sComplied, sPerc});
+	                grandDuring += sDuring;
+	                grandYtd += sYtd;
+	                grandComplied += sComplied;
+	            }
+	            double grandPerc = grandYtd > 0 ? (double) grandComplied / grandYtd * 100 : 0;
+
+	            // ────────────────────────────────────────────────
+	            // Per-SBU sheets with chart
+	            // ────────────────────────────────────────────────
+	            for (String sbu : sbuList) {
+	                XSSFSheet sheet = workBook.createSheet(WorkbookUtil.createSafeSheetName(sbu));
+
+	                // Title - merged across all columns
+	                XSSFRow titleRow = sheet.createRow(0);
+	                Cell titleCell = titleRow.createCell(0);
+	                titleCell.setCellValue(dynamicTitle);
+	                titleCell.setCellStyle(yellowStyle);
+	                sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 7));
+
+	                // Headers
+	                XSSFRow headingRow = sheet.createRow(1);
+	                String[] headers = {"S.No", "BU", "Site /Project name", "During this week", "YTD", "Complied", "In Progress", "% of compliance"};
+	                for (int i = 0; i < headers.length; i++) {
+	                    Cell cell = headingRow.createCell(i);
+	                    cell.setCellStyle(greenStyle);
+	                    cell.setCellValue(headers[i]);
+	                }
+
+	                // Data rows
+	                Map<String, Agg> projects = aggMap.get(sbu);
+	                List<String> projectList = new ArrayList<>(projects.keySet());
+	                projectList.sort(Comparator.naturalOrder());
+
+	                int rowNo = 2;
+	                int firstDataRowIndex = rowNo;
+	                int sno = 1;
+	                int totalDuring = 0, totalYtd = 0, totalComplied = 0, totalInProgress = 0;
+
+	                for (String project : projectList) {
+	                    Agg agg = projects.get(project);
+	                    double perc = agg.ytd > 0 ? (double) agg.complied / agg.ytd * 100 : 0;
+
+	                    XSSFRow row = sheet.createRow(rowNo++);
+	                    int c = 0;
+
+	                    row.createCell(c++).setCellValue(sno++);
+	                    row.createCell(c++).setCellValue(""); // BU placeholder
+	                    row.createCell(c++).setCellValue(project);
+	                    row.createCell(c++).setCellValue(agg.duringWeek);
+	                    row.createCell(c++).setCellValue(agg.ytd);
+	                    row.createCell(c++).setCellValue(agg.complied);
+	                    row.createCell(c++).setCellValue(agg.inProgress);
+	                    row.createCell(c++).setCellValue(perc);
+
+	                    totalDuring += agg.duringWeek;
+	                    totalYtd += agg.ytd;
+	                    totalComplied += agg.complied;
+	                    totalInProgress += agg.inProgress;
+	                }
+
+	                // BU merge logic - only when multiple rows
+	                if (!projectList.isEmpty()) {
+	                    int lastDataRow = rowNo - 1;
+	                    Cell buCell = sheet.getRow(firstDataRowIndex).createCell(1);
+	                    buCell.setCellValue(sbu);
+	                    buCell.setCellStyle(sectionStyle);
+
+	                    if (projectList.size() >= 2) {
+	                        sheet.addMergedRegion(new CellRangeAddress(firstDataRowIndex, lastDataRow, 1, 1));
+	                    }
+	                }
+
+	                // Total row
+	                XSSFRow totalRow = sheet.createRow(rowNo);
+	                int tc = 0;
+	                totalRow.createCell(tc++).setCellStyle(sectionStyle);
+	                totalRow.createCell(tc++).setCellValue("TOTAL");
+	                totalRow.createCell(tc++).setCellStyle(sectionStyle);
+	                totalRow.createCell(tc++).setCellValue(totalDuring);
+	                totalRow.createCell(tc++).setCellValue(totalYtd);
+	                totalRow.createCell(tc++).setCellValue(totalComplied);
+	                totalRow.createCell(tc++).setCellValue(totalInProgress);
+	                double totalPerc = totalYtd > 0 ? (double) totalComplied / totalYtd * 100 : 0;
+	                totalRow.createCell(tc++).setCellValue(totalPerc);
+
+	                // Auto-size columns
+	                for (int i = 0; i < headers.length; i++) {
+	                    sheet.autoSizeColumn(i);
+	                }
+
+	                // ────────────────────────────────────────────────
+	                // Chart for this SBU sheet
+	                // ────────────────────────────────────────────────
+	                if (rowNo > 2) { // at least one data row
+	                    XSSFDrawing drawing = sheet.createDrawingPatriarch();
+	                    XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 9, 0, 25, 25); // right of table
+	                    XSSFChart chart = drawing.createChart(anchor);
+	                    chart.setTitleText(sbu);
+	                    chart.setTitleOverlay(false);
+
+	                    XDDFChartLegend legend = chart.getOrAddLegend();
+	                    legend.setPosition(LegendPosition.BOTTOM);
+
+	                    XDDFCategoryAxis bottomAxis = chart.createCategoryAxis(org.apache.poi.xddf.usermodel.chart.AxisPosition.BOTTOM);
+	                    bottomAxis.setTitle("Site / Project");
+
+	                    XDDFValueAxis leftAxis = chart.createValueAxis(org.apache.poi.xddf.usermodel.chart.AxisPosition.LEFT);
+	                    leftAxis.setTitle("Count");
+
+	                    int firstDataRow = 2;
+	                    int lastDataRow = rowNo - 1; // exclude TOTAL
+
+	                    CellRangeAddress sitesRange = new CellRangeAddress(firstDataRow, lastDataRow, 2, 2);
+	                    XDDFCategoryDataSource sites = XDDFDataSourcesFactory.fromStringCellRange(sheet, sitesRange);
+
+	                    CellRangeAddress duringRange = new CellRangeAddress(firstDataRow, lastDataRow, 3, 3);
+	                    XDDFNumericalDataSource<Double> during = XDDFDataSourcesFactory.fromNumericCellRange(sheet, duringRange);
+
+	                    CellRangeAddress ytdRange = new CellRangeAddress(firstDataRow, lastDataRow, 4, 4);
+	                    XDDFNumericalDataSource<Double> ytds = XDDFDataSourcesFactory.fromNumericCellRange(sheet, ytdRange);
+
+	                    CellRangeAddress compliedRange = new CellRangeAddress(firstDataRow, lastDataRow, 5, 5);
+	                    XDDFNumericalDataSource<Double> complieds = XDDFDataSourcesFactory.fromNumericCellRange(sheet, compliedRange);
+
+	                    XDDFBarChartData data = (XDDFBarChartData) chart.createData(ChartTypes.BAR, bottomAxis, leftAxis);
+	                    data.setBarDirection(BarDirection.COL);
+
+	                    XDDFBarChartData.Series seriesDuring   = (XDDFBarChartData.Series) data.addSeries(sites, during);
+	                    XDDFBarChartData.Series seriesYtd      = (XDDFBarChartData.Series) data.addSeries(sites, ytds);
+	                    XDDFBarChartData.Series seriesComplied = (XDDFBarChartData.Series) data.addSeries(sites, complieds);
+
+	                    seriesDuring.setTitle("During this week", null);
+	                    seriesYtd.setTitle("YTD", null);
+	                    seriesComplied.setTitle("Complied", null);
+
+	                    chart.plot(data);
+
+	                    // Colors
+	                    XDDFSolidFillProperties fillDuring = new XDDFSolidFillProperties(XDDFColor.from(new byte[]{(byte)255, (byte)102, (byte)0})); // orange
+	                    XDDFShapeProperties spDuring = seriesDuring.getShapeProperties();
+	                    if (spDuring == null) spDuring = new XDDFShapeProperties();
+	                    spDuring.setFillProperties(fillDuring);
+	                    seriesDuring.setShapeProperties(spDuring);
+
+	                    XDDFSolidFillProperties fillYtd = new XDDFSolidFillProperties(XDDFColor.from(new byte[]{(byte)192, (byte)0, (byte)0})); // red
+	                    XDDFShapeProperties spYtd = seriesYtd.getShapeProperties();
+	                    if (spYtd == null) spYtd = new XDDFShapeProperties();
+	                    spYtd.setFillProperties(fillYtd);
+	                    seriesYtd.setShapeProperties(spYtd);
+
+	                    XDDFSolidFillProperties fillComplied = new XDDFSolidFillProperties(XDDFColor.from(new byte[]{(byte)0, (byte)176, (byte)80})); // green
+	                    XDDFShapeProperties spComplied = seriesComplied.getShapeProperties();
+	                    if (spComplied == null) spComplied = new XDDFShapeProperties();
+	                    spComplied.setFillProperties(fillComplied);
+	                    seriesComplied.setShapeProperties(spComplied);
+	                }
+	            }
+
+	            // ────────────────────────────────────────────────
+	            // Summary sheet with chart
+	            // ────────────────────────────────────────────────
+	            XSSFSheet summarySheet = workBook.createSheet("Summary");
+
+	            // Title - merged
+	            XSSFRow sTitleRow = summarySheet.createRow(0);
+	            Cell sTitleCell = sTitleRow.createCell(0);
+	            sTitleCell.setCellValue(dynamicTitle);
+	            sTitleCell.setCellStyle(yellowStyle);
+	            summarySheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 4));
+
+	            // Headers
+	            XSSFRow sHeadingRow = summarySheet.createRow(1);
+	            String[] sHeaders = {"BU", "During this week", "During this FY", "Complied", "% Compliance"};
+	            for (int i = 0; i < sHeaders.length; i++) {
+	                Cell cell = sHeadingRow.createCell(i);
+	                cell.setCellStyle(greenStyle);
+	                cell.setCellValue(sHeaders[i]);
+	            }
+
+	            int sRowNo = 2;
+	            for (Object[] d : summaryData) {
+	                XSSFRow row = summarySheet.createRow(sRowNo++);
 	                int c = 0;
-	            
-	                Cell cell = row.createCell(c++);
-					cell.setCellStyle(sectionStyle);
-					cell.setCellValue(obj1.getDocument_code());
-					
-	                cell = row.createCell(c++);
-					cell.setCellStyle(sectionStyle);
-					cell.setCellValue (obj1.getSbu_code()+" - "+obj1.getSbu_name());
-					
-					cell = row.createCell(c++);
-					cell.setCellStyle(sectionStyle);
-					cell.setCellValue (obj1.getProject_code()+" - "+obj1.getProject_name());
-					
-					cell = row.createCell(c++);
-					cell.setCellStyle(sectionStyle);
-					cell.setCellValue (obj1.getDepartment_code()+" - "+obj1.getDepartment_name());
-					
-					cell = row.createCell(c++);
-					cell.setCellStyle(sectionStyle);
-					cell.setCellValue (obj1.getDescription());
-					
-					cell = row.createCell(c++);
-					cell.setCellStyle(sectionStyle);
-					cell.setCellValue (obj1.getApprover_type());
-					
-					cell = row.createCell(c++);
-					cell.setCellStyle(sectionStyle);
-					cell.setCellValue (obj1.getStatus());
-					
-					cell = row.createCell(c++);
-					cell.setCellStyle(sectionStyle);
-					cell.setCellValue (obj1.getRisk_type());
-					
-					cell = row.createCell(c++);
-					cell.setCellStyle(sectionStyle);
-					cell.setCellValue (obj1.getCreated_date());
-					
-					cell = row.createCell(c++);
-					cell.setCellStyle(sectionStyle);
-					cell.setCellValue (obj1.getCreated_by()+" - "+obj1.getUser_name());
-					
-	                rowNo++;
+	                row.createCell(c++).setCellValue((String) d[0]);
+	                row.createCell(c++).setCellValue((Integer) d[1]);
+	                row.createCell(c++).setCellValue((Integer) d[2]);
+	                row.createCell(c++).setCellValue((Integer) d[3]);
+	                row.createCell(c++).setCellValue((Double) d[4]);
 	            }
-	            for(int columnIndex = 0; columnIndex < firstHeaderStringArr.length; columnIndex++) {
-	        		sheet.setColumnWidth(columnIndex, 25 * 200);
-	        		sheet.setColumnWidth(4, 100 * 200);
-				}
-                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
-                Date date = new Date();
-                String fileName = "IRM_"+dateFormat.format(date);
-                
-	            try{
-	                /*FileOutputStream fos = new FileOutputStream(fileDirectory +fileName+".xls");
-	                workBook.write(fos);
-	                fos.flush();*/
-	            	
-	               response.setContentType("application/.csv");
-	 			   response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-	 			   response.setContentType("application/vnd.ms-excel");
-	 			   // add response header
-	 			   response.addHeader("Content-Disposition", "attachment; filename=" + fileName+".xlsx");
-	 			   
-	 			    //copies all bytes from a file to an output stream
-	 			   workBook.write(response.getOutputStream()); // Write workbook to response.
-		           workBook.close();
-	 			    //flushes output stream
-	 			    response.getOutputStream().flush();
-	            	
-	                
-	                attributes.addFlashAttribute("success",dataExportSucess);
-	            	//response.setContentType("application/vnd.ms-excel");
-	            	//response.setHeader("Content-Disposition", "attachment; filename=filename.xls");
-	            	//XSSFWorkbook  workbook = new XSSFWorkbook ();
-	            	// ...
-	            	// Now populate workbook the usual way.
-	            	// ...
-	            	//workbook.write(response.getOutputStream()); // Write workbook to response.
-	            	//workbook.close();
-	            }catch(FileNotFoundException e){
-	                //e.printStackTrace();
-	                attributes.addFlashAttribute("error",dataExportInvalid);
-	            }catch(IOException e){
-	                //e.printStackTrace();
-	                attributes.addFlashAttribute("error",dataExportError);
+
+	            XSSFRow gTotalRow = summarySheet.createRow(sRowNo);
+	            gTotalRow.createCell(0).setCellValue("Total");
+	            gTotalRow.createCell(1).setCellValue(grandDuring);
+	            gTotalRow.createCell(2).setCellValue(grandYtd);
+	            gTotalRow.createCell(3).setCellValue(grandComplied);
+	            gTotalRow.createCell(4).setCellValue(grandPerc);
+
+	            for (int i = 0; i < sHeaders.length; i++) {
+	                summarySheet.autoSizeColumn(i);
 	            }
-         }else{
-        	 attributes.addFlashAttribute("error",dataExportNoData);
-         }
-		}catch(Exception e){	
-			e.printStackTrace();
-			logger.error("exportCompany : : User Id - "+userId+" - User Name - "+userName+" - "+e.getMessage());
-			attributes.addFlashAttribute("error", commonError);			
-		}
-		//return view;
+
+	            // Chart for Summary sheet
+	            if (sRowNo > 2) {
+	                XSSFDrawing drawing = summarySheet.createDrawingPatriarch();
+	                XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 6, 3, 22, 28);
+	                XSSFChart chart = drawing.createChart(anchor);
+	                chart.setTitleText("Summary - All SBUs");
+	                chart.setTitleOverlay(false);
+
+	                XDDFChartLegend legend = chart.getOrAddLegend();
+	                legend.setPosition(LegendPosition.BOTTOM);
+
+	                XDDFCategoryAxis bottomAxis = chart.createCategoryAxis(org.apache.poi.xddf.usermodel.chart.AxisPosition.BOTTOM);
+	                bottomAxis.setTitle("BU");
+
+	                XDDFValueAxis leftAxis = chart.createValueAxis(org.apache.poi.xddf.usermodel.chart.AxisPosition.LEFT);
+	                leftAxis.setTitle("Count");
+
+	                int firstDataRow = 2;
+	                int lastDataRow = sRowNo - 1;
+
+	                CellRangeAddress buRange = new CellRangeAddress(firstDataRow, lastDataRow, 0, 0);
+	                XDDFCategoryDataSource buNames = XDDFDataSourcesFactory.fromStringCellRange(summarySheet, buRange);
+
+	                CellRangeAddress duringRange = new CellRangeAddress(firstDataRow, lastDataRow, 1, 1);
+	                XDDFNumericalDataSource<Double> during = XDDFDataSourcesFactory.fromNumericCellRange(summarySheet, duringRange);
+
+	                CellRangeAddress ytdRange = new CellRangeAddress(firstDataRow, lastDataRow, 2, 2);
+	                XDDFNumericalDataSource<Double> ytds = XDDFDataSourcesFactory.fromNumericCellRange(summarySheet, ytdRange);
+
+	                CellRangeAddress compliedRange = new CellRangeAddress(firstDataRow, lastDataRow, 3, 3);
+	                XDDFNumericalDataSource<Double> complieds = XDDFDataSourcesFactory.fromNumericCellRange(summarySheet, compliedRange);
+
+	                XDDFBarChartData data = (XDDFBarChartData) chart.createData(ChartTypes.BAR, bottomAxis, leftAxis);
+	                data.setBarDirection(BarDirection.COL);
+
+	                XDDFBarChartData.Series seriesDuring   = (XDDFBarChartData.Series) data.addSeries(buNames, during);
+	                XDDFBarChartData.Series seriesYtd      = (XDDFBarChartData.Series) data.addSeries(buNames, ytds);
+	                XDDFBarChartData.Series seriesComplied = (XDDFBarChartData.Series) data.addSeries(buNames, complieds);
+
+	                seriesDuring.setTitle("During this week", null);
+	                seriesYtd.setTitle("During this FY", null);
+	                seriesComplied.setTitle("Complied", null);
+
+	                chart.plot(data);
+
+	                // Colors
+	                XDDFSolidFillProperties fillDuring = new XDDFSolidFillProperties(XDDFColor.from(new byte[]{(byte)255, (byte)102, (byte)0}));
+	                XDDFShapeProperties spDuring = seriesDuring.getShapeProperties();
+	                if (spDuring == null) spDuring = new XDDFShapeProperties();
+	                spDuring.setFillProperties(fillDuring);
+	                seriesDuring.setShapeProperties(spDuring);
+
+	                XDDFSolidFillProperties fillYtd = new XDDFSolidFillProperties(XDDFColor.from(new byte[]{(byte)192, (byte)0, (byte)0}));
+	                XDDFShapeProperties spYtd = seriesYtd.getShapeProperties();
+	                if (spYtd == null) spYtd = new XDDFShapeProperties();
+	                spYtd.setFillProperties(fillYtd);
+	                seriesYtd.setShapeProperties(spYtd);
+
+	                XDDFSolidFillProperties fillComplied = new XDDFSolidFillProperties(XDDFColor.from(new byte[]{(byte)0, (byte)176, (byte)80}));
+	                XDDFShapeProperties spComplied = seriesComplied.getShapeProperties();
+	                if (spComplied == null) spComplied = new XDDFShapeProperties();
+	                spComplied.setFillProperties(fillComplied);
+	                seriesComplied.setShapeProperties(spComplied);
+	            }
+
+	            // Export
+	            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
+	            Date date = new Date();
+	            String fileName = "Aayush_" + dateFormat.format(date);
+
+	            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+	            response.addHeader("Content-Disposition", "attachment; filename=" + fileName + ".xlsx");
+
+	            workBook.write(response.getOutputStream());
+	            workBook.close();
+	            response.getOutputStream().flush();
+
+	            attributes.addFlashAttribute("success", dataExportSucess);
+	        } else {
+	            attributes.addFlashAttribute("error", dataExportNoData);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        attributes.addFlashAttribute("error", commonError);
+	    }
 	}
 	
-
 	private CellStyle cellFormating(XSSFWorkbook workBook,byte[] rgb,HorizontalAlignment hAllign, VerticalAlignment vAllign, boolean isWrapText,boolean isBoldText,boolean isItalicText,int fontSize,String fontName) {
 		CellStyle style = workBook.createCellStyle();
 		//Setting Background color  

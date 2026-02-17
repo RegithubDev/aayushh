@@ -95,11 +95,11 @@ div.main-menu-content {
 			      <span data-i18n="Analytics">Work Permit</span></a>
 			</li>
 			</c:if> --%>
-			 <li class="dropdown nav-item " data-menu id="reports" url="irm-report">
+			<%--  <li class="dropdown nav-item " data-menu id="reports" url="irm-report">
 			    <a class="dropdown-item d-flex align-items-center" href="<%=request.getContextPath() %>/irm-report" data-bs-toggle=""
 			     data-i18n="Analytics"><i data-feather='layers'></i>
 			      <span data-i18n="Analytics">Incident Reports</span></a>
-			</li>
+			</li> --%>
 			
 			<li class="dropdown nav-item " data-menu id="help" url="help">
 			    <a class="dropdown-item d-flex align-items-center" href="<%=request.getContextPath() %>/help-center" data-bs-toggle="" 

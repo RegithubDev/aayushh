@@ -219,8 +219,8 @@ tr td:last-child {
            <div class="content-header-right col-md-4 col-12 mb-2">
             <div class="row breadcrumbs-top">
               <div class="col-12">
-<%--                 <a type="button" class="btn "  data-bs-toggle="tooltip" data-bs-original-title="Click to Raise an Incident" href="<%=request.getContextPath() %>/irm-add-incident"  style="margin-top: 17px; color: white !important; background-color: orange !important;"><i class="fa fa-add" aria-hidden="true"></i> Submit Incident</a>
- --%>         <button class="btn col-md-12" data-bs-toggle="tooltip" data-bs-original-title="Download Incidents Details"   style="margin-top: 17px; width: 42%;   background-color: #14e014 !important;color: white !important;"  onclick="exportIRM();"><i class="fa fa-download" aria-hidden="true"></i> Download</button>
+                <a type="button" class="btn "  data-bs-toggle="tooltip" data-bs-original-title="Click to Raise an Incident" href="<%=request.getContextPath() %>/irm-add-incident"  style="margin-top: 17px; color: white !important; background-color: orange !important;"><i class="fa fa-add" aria-hidden="true"></i> Submit Incident</a>
+         <button class="btn col-md-12" data-bs-toggle="tooltip" data-bs-original-title="Download Incidents Details"   style="margin-top: 17px; width: 42%;   background-color: #14e014 !important;color: white !important;"  onclick="exportIRM();"><i class="fa fa-download" aria-hidden="true"></i> Download</button>
      
               </div>
             </div>
@@ -421,7 +421,7 @@ tr td:last-child {
           <%--  <c:if test="${sessionScope.BASE_ROLE eq 'Admin' || sessionScope.BASE_ROLE eq 'Management' }"> --%>
           
          <%--   </c:if> --%>
-        <!--      <li class="nav-item"  onclick="getIRMList('irm-pending');">
+             <li class="nav-item"  onclick="getIRMList('irm-pending');">
               <a
                 class="nav-link"
                 id="profile-tab-justified"
@@ -433,8 +433,8 @@ tr td:last-child {
                  >Pending Actions <button type="button" class="btn btn-icon btn-icon rounded-circle btn-danger waves-effect waves-float waves-light">
 <span id="counts">0</span>           </button></a
               >
-            </li> -->
-      <!--       <li class="nav-item"  onclick="getIRMList('irm-completed');">
+            </li>
+            <li class="nav-item"  onclick="getIRMList('irm-completed');">
               <a
                 class="nav-link"
                 id="messages-tab-justified"
@@ -445,7 +445,7 @@ tr td:last-child {
                 aria-selected="false"
                 >Action Taken</a
               >
-            </li> -->
+            </li>
             <c:if test="${sessionScope.BASE_ROLE eq 'Admin' }">
             <li class="nav-item" onclick="getIRMList('irm-no-reviewer');">
               <a

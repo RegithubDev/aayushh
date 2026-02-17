@@ -21,6 +21,7 @@ License: You must have a valid license purchased only from themeforest(the above
 <head>
    
 <style>
+
 .mdl-grid{
 	display: flex !important;
     padding: 4px;
